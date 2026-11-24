@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="قورباغه و پله‌ها">
+<meta name="theme-color" content="#1E5FD8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>قورباغه و پله‌ها</title>
+<style>
+:root{--bg:#F4F8FF;--card:#fff;--text:#1d2433;--sub:#5b6577;--line:#d5dcea;--scene:#efeaf7;--ok:#2E9E3F;--bad:#D32F2F;--pri:#1E5FD8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a26;--card:#1f2736;--text:#eef2fa;--sub:#a9b3c7;--line:#38425a;--scene:#2a2f45}}
+:root[data-theme="dark"]{--bg:#141a26;--card:#1f2736;--text:#eef2fa;--sub:#a9b3c7;--line:#38425a;--scene:#2a2f45}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,"Vazirmatn","Segoe UI",sans-serif;line-height:1.7}
+.app{max-width:520px;margin:0 auto;padding:14px 14px 40px}
+h1{font-size:22px;text-align:center;margin:4px 0;color:var(--pri)}
+.top{display:flex;justify-content:space-between;align-items:center;margin:8px 0}
+.stars{font-size:24px;letter-spacing:2px}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:2px 12px;font-size:14px;color:var(--sub)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px}
+.q{font-size:17px;text-align:center;margin:6px 0 10px}
+.sc{width:100%;height:auto;background:var(--scene);border-radius:12px;display:block}
+#frog{transition:transform .35s ease-in-out}
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.opt{display:flex;flex-wrap:wrap;gap:4px;align-items:center;justify-content:flex-start;direction:ltr;background:var(--card);border:2.5px solid var(--line);border-radius:14px;padding:10px;cursor:pointer;font:inherit;color:inherit;text-align:left;width:100%}
+.opt:active{transform:scale(.98)}
+.opt.ok{border-color:var(--ok);background:rgba(46,158,63,.14)}
+.opt.bad{border-color:var(--bad);background:rgba(211,47,47,.12);animation:sh .4s}
+.opt[disabled]{cursor:default}
+.flag{background:#FFD54A;color:#2E9E3F;border-radius:14px 6px 6px 14px;padding:2px 10px;font-size:22px;line-height:1.3;font-weight:bold}
+.rep{display:inline-flex;gap:3px;align-items:center;background:#FFA726;border-radius:10px;padding:4px}
+.mv{display:inline-flex;flex-direction:column;align-items:center;background:#4FC3F7;color:#06384F;border-radius:8px;padding:1px 6px;font-size:18px;line-height:1.2;min-width:36px}
+.mv i{font-style:normal;background:#fff;border-radius:8px;padding:0 6px;font-size:12px;line-height:1.4;margin-top:1px}
+.rp{background:#FFE0B2;color:#7a3e00}
+.msg{min-height:58px;text-align:center;font-size:17px;margin:12px 0 4px;font-weight:bold}
+.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+.btn{display:block;margin:6px auto 0;background:var(--pri);color:#fff;border:0;border-radius:14px;padding:10px 28px;font:inherit;font-size:17px;cursor:pointer}
+.big{font-size:64px;text-align:center;margin:10px 0}
+.nm{display:block;width:100%;margin:10px 0;padding:12px;font:inherit;font-size:20px;text-align:center;color:var(--text);background:var(--bg);border:2.5px solid var(--line);border-radius:14px;outline:none;-webkit-appearance:none;appearance:none}
+.nm:focus{border-color:var(--pri)}
+.opt,.btn{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.final{text-align:center}
+.cf{position:fixed;top:-30px;font-size:26px;pointer-events:none;animation:fall 2.2s linear forwards;z-index:9}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:.8}}
+@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🐸 قورباغه و پله‌ها</h1>
+<div class="top"><span class="pill" id="num"></span><span class="stars" id="stars"></span></div>
+<div id="game"></div>
+</div>
+<script>
+var fa=function(n){return String(n).replace(/\d/g,function(d){return "۰۱۲۳۴۵۶۷۸۹"[d]})};
+var AR={up:"⬆",down:"⬇",right:"➡",left:"⬅"};
+var G=function(m,r){return {m:m,r:r}};
+var U2R3=G([["up",2],["right",3]],5);
+var Q=[
+ {type:"stairs",n:5,ret:"",hint:"قورباغه باید بالا برود و به سمت راست برود. بلوک‌ها را بخوان!",
+  opts:[[U2R3],[G([["down",2],["right",3]],5)],[G([["up",2],["right",3]],2)]]},
+ {type:"stairs",n:5,ret:"back",hint:"قورباغه اول بالا می‌رود و بعد برمی‌گردد. دو دسته بلوک لازم است!",
+  opts:[[U2R3,G([["left",3],["down",2]],5)],[U2R3,G([["right",3],["down",2]],5)],[U2R3,G([["left",3],["down",2]],2)]]},
+ {type:"pyr",n:4,ret:"",hint:"هر بار ۲ تا بالا و ۲ تا راست. چند بار تکرار شود؟",
+  opts:[[G([["up",2],["right",2]],4)],[G([["up",2],["right",2]],2)],[G([["up",2],["left",2]],4)]]},
+ {type:"pyr",n:4,ret:"down",hint:"قورباغه از سمت راست پایین می‌آید. جهت‌ها را نگاه کن!",
+  opts:[[G([["up",2],["right",2]],4),G([["right",2],["down",2]],4)],[G([["up",2],["right",2]],4),G([["left",2],["down",2]],4)],[G([["up",2],["right",2]],4),G([["right",2],["up",2]],4)]]}
+];
+var GOOD=["آفرین! عالی بود! 🎉","دمت گرم! درست گفتی! ⭐","ایول! تو یک برنامه‌نویس کوچولویی! 🌟","چه باهوشی! همین بود! 🏆"];
+var TRY=["نزدیک بود! دوباره امتحان کن 💪","اشکال ندارد! یک بار دیگر 😊","تقریباً درست بود! دقیق‌تر نگاه کن 👀"];
+var qi=0,stars=0,tries=0,route=[],locked=false,name="";
+
+function grp(g){return '<span class="rep">'+g.m.map(function(x){return '<span class="mv">'+AR[x[0]]+'<i>'+fa(x[1])+'</i></span>'}).join("")+'<span class="mv rp">↻<i>'+fa(g.r)+'</i></span></span>'}
+function code(gs){return '<span class="flag">⚑</span>'+gs.map(grp).join("")}
+
+function scene(q){
+ var L=14,R=188,base=122,n=q.n,cols=[],i;
+ for(i=1;i<=n;i++)cols.push(i);
+ if(q.type=="pyr")for(i=n-1;i>=1;i--)cols.push(i);
+ var sw=(R-L)/cols.length,sh=88/n,color=q.type=="stairs"?"#1a1a66":"#c00000";
+ var top=function(k){return [L+k*sw+sw/2,base-cols[k]*sh-9]};
+ var start=[L+3,base-9],r=[start],k;
+ for(k=0;k<n;k++)r.push(top(k));
+ if(q.ret=="back"){for(k=n-2;k>=0;k--){var p=top(k);r.push([p[0],p[1]+6])}r.push([start[0],start[1]+4])}
+ if(q.ret=="down"){for(k=n;k<cols.length;k++)r.push(top(k));r.push([R-2,base-9])}
+ var s='<svg viewBox="0 0 200 135" class="sc" role="img" aria-label="مسیر قورباغه"><defs><marker id="ah" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6z" fill="#f57c00"/></marker></defs>';
+ s+=cols.map(function(h,j){return '<rect x="'+(L+j*sw)+'" y="'+(base-h*sh)+'" width="'+(sw+.5)+'" height="'+(h*sh)+'" fill="'+color+'"/>'}).join("");
+ s+='<polyline points="'+r.map(function(p){return p.join(",")}).join(" ")+'" fill="none" stroke="#f57c00" stroke-width="2.2" stroke-dasharray="5 3" stroke-linejoin="round" marker-end="url(#ah)"/>';
+ s+='<g id="frog" style="transform:translate('+start[0]+'px,'+start[1]+'px)"><text font-size="15" text-anchor="middle" y="5">🐸</text></g></svg>';
+ route=r;return s;
+}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+
+function draw(){
+ var q=Q[qi];tries=0;locked=false;
+ document.getElementById("num").textContent="سؤال "+fa(qi+1)+" از "+fa(Q.length);
+ document.getElementById("stars").textContent=stars?Array(stars+1).join("⭐"):"☆☆☆☆".slice(0,Q.length-0);
+ var idx=shuffle([0,1,2]);
+ var h='<div class="card"><div class="q">قورباغه این راه را رفته. <br>کدام کد درست است؟</div>'+scene(q)+'</div><div class="opts">';
+ idx.forEach(function(o){h+='<button class="opt" data-ok="'+(o==0?1:0)+'">'+code(q.opts[o])+'</button>'});
+ h+='</div><div class="msg" id="msg"></div><div id="nx"></div>';
+ document.getElementById("game").innerHTML=h;
+ [].forEach.call(document.querySelectorAll(".opt"),function(b){b.onclick=function(){pick(b)}});
+}
+function say(t,c){var m=document.getElementById("msg");m.textContent=t;m.className="msg "+c}
+function pick(b){
+ if(locked)return;
+ if(b.getAttribute("data-ok")=="1"){
+  locked=true;b.classList.add("ok");
+  [].forEach.call(document.querySelectorAll(".opt"),function(x){x.disabled=true});
+  if(tries==0)stars++;
+  document.getElementById("stars").textContent=Array(stars+1).join("⭐");
+  say(name+"، "+GOOD[qi%GOOD.length],"ok");confetti(14);hop(0);
+ }else{
+  tries++;b.classList.add("bad");b.disabled=true;
+  say(name+"، "+TRY[tries%TRY.length]+" — راهنما: "+Q[qi].hint,"bad");
+ }
+}
+function hop(i){
+ var f=document.getElementById("frog");
+ if(!f)return;
+ if(i>=route.length){
+  var last=qi==Q.length-1;
+  document.getElementById("nx").innerHTML='<button class="btn" id="go">'+(last?"ببین چند ستاره گرفتی! 🏆":"سؤال بعدی ←")+'</button>';
+  document.getElementById("go").onclick=function(){qi++;if(qi>=Q.length)finish();else draw()};
+  return;
+ }
+ f.style.transform="translate("+route[i][0]+"px,"+route[i][1]+"px)";
+ setTimeout(function(){hop(i+1)},i==0?200:380);
+}
+function finish(){
+ var t=stars==Q.length?"قهرمان برنامه‌نویسی! 🏆":stars>=2?"خیلی عالی بودی! 🌟":"آفرین که تلاش کردی! دوباره بازی کن تا ستاره‌های بیشتری بگیری 💪";
+ document.getElementById("num").textContent="پایان بازی";
+ document.getElementById("game").innerHTML='<div class="card final"><div class="big">'+(stars==Q.length?"🏆":"🎉")+'</div><div class="q">'+name+'، تو '+fa(stars)+' ستاره از '+fa(Q.length)+' گرفتی!</div><div class="stars">'+Array(stars+1).join("⭐")+'</div><div class="msg ok">'+t+'</div><button class="btn" id="again">بازی دوباره 🔄</button></div>';
+ confetti(30);
+ document.getElementById("again").onclick=function(){startScreen()};
+}
+function confetti(n){
+ var e=["🎉","⭐","🌟","✨","🎈"];
+ for(var i=0;i<n;i++){(function(i){setTimeout(function(){
+  var s=document.createElement("span");s.className="cf";s.textContent=e[i%e.length];
+  s.style.left=Math.random()*95+"vw";document.body.appendChild(s);
+  setTimeout(function(){s.remove()},2300)},i*70)})(i)}
+}
+function startScreen(){
+ document.getElementById("num").textContent="";document.getElementById("stars").textContent="";
+ document.getElementById("game").innerHTML='<div class="card final"><div class="big">🐸</div><div class="q">سلام! اسمت چیست؟<br>اسمت را بنویس تا بازی شروع شود</div><input id="nm" class="nm" type="text" maxlength="20" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="اسمت را اینجا بنویس"><button class="btn" id="st">شروع بازی ▶</button></div>';
+ var inp=document.getElementById("nm");inp.value=name;
+ var go=function(){name=inp.value.trim()||"دوست من";qi=0;stars=0;draw()};
+ document.getElementById("st").onclick=go;
+ inp.onkeydown=function(e){if(e.key=="Enter")go()};
+}
+startScreen();
+</script>
+</body>
+</html>
